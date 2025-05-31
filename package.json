@@ -20,6 +20,7 @@
     "build": "del-cli dist && tsc --project tsconfig.dist.json",
     "lint": "eslint --ext .js,.ts --ignore-path .gitignore --max-warnings 0 .",
     "test": "jest",
+    "typecheck": "tsc --noEmit",
     "prepare": "npm run build"
   },
   "dependencies": {

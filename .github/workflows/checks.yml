@@ -38,6 +38,17 @@ jobs:
           node-version-file: ".nvmrc"
       - name: Run prettier
         run: npx prettier --check '**/*.md'
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+      - name: Install dependencies
+        run: npm ci
+      - name: Run TypeScript type checking
+        run: npm run typecheck
   test:
     runs-on: ubuntu-latest
     steps:
