@@ -1,6 +1,11 @@
 import type {
+  CodeDefinition,
   DocNode as ADFDoc,
+  EmDefinition,
+  LinkDefinition,
   PanelType as ADFPanelType,
+  StrongDefinition,
+  SubSupDefinition,
   TextDefinition,
 } from "@atlaskit/adf-schema/schema";
 import Chance from "chance";
@@ -11,7 +16,14 @@ import { fromADF as convert } from ".";
 const seed = process.env.SEED;
 const random = seed ? new Chance(seed) : new Chance();
 
-function textWithMarks(text: string, marks: any[]): TextDefinition {
+type MarkDefinition =
+  | StrongDefinition
+  | EmDefinition
+  | CodeDefinition
+  | LinkDefinition
+  | SubSupDefinition;
+
+function textWithMarks(text: string, marks: MarkDefinition[]): TextDefinition {
   return {
     type: "text",
     text,
