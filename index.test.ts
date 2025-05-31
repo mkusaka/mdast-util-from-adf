@@ -1,6 +1,7 @@
 import type {
   DocNode as ADFDoc,
   PanelType as ADFPanelType,
+  TextDefinition as ADFText,
 } from "@atlaskit/adf-schema/schema";
 import Chance from "chance";
 import { u } from "unist-builder";
@@ -26,7 +27,11 @@ it("converts simple documents", () => {
           type: "paragraph",
           content: [
             { type: "text", text: "Hello " },
-            { type: "text", text: "World", marks: [{ type: "strong" }] as any },
+            {
+              type: "text",
+              text: "World",
+              marks: [{ type: "strong" }],
+            } as ADFText,
           ],
         },
       ])
@@ -80,9 +85,9 @@ it("converts strong emphasized text", () => {
             { type: "text", text: "strong & emphasized: " },
             {
               type: "text",
-              marks: [{ type: "em" }, { type: "strong" }] as any,
+              marks: [{ type: "em" }, { type: "strong" }],
               text,
-            },
+            } as ADFText,
           ],
         },
       ])
@@ -109,9 +114,9 @@ it("converts inline code", () => {
             { type: "text", text: "This is " },
             {
               type: "text",
-              marks: [{ type: "code" }] as any,
+              marks: [{ type: "code" }],
               text,
-            },
+            } as ADFText,
           ],
         },
       ])
@@ -141,8 +146,8 @@ it("converts inline code", () => {
               {
                 type: "text",
                 text: "2",
-                marks: [{ type: "subsup", attrs: { type } }] as any,
-              },
+                marks: [{ type: "subsup", attrs: { type } }],
+              } as ADFText,
             ],
           },
         ])
@@ -167,9 +172,9 @@ it("converts links", () => {
           content: [
             {
               type: "text",
-              marks: [{ type: "link", attrs: { href: url } }] as any,
+              marks: [{ type: "link", attrs: { href: url } }],
               text,
-            },
+            } as ADFText,
           ],
         },
       ])
