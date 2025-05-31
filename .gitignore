@@ -25,3 +25,4 @@ dist/
 
 # Output of `npm pack`
 *.tgz
+coverage/
