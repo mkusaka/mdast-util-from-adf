@@ -1,7 +1,7 @@
 import type {
   DocNode as ADFDoc,
   PanelType as ADFPanelType,
-} from "@atlaskit/adf-schema";
+} from "@atlaskit/adf-schema/schema";
 import Chance from "chance";
 import { u } from "unist-builder";
 
@@ -26,7 +26,7 @@ it("converts simple documents", () => {
           type: "paragraph",
           content: [
             { type: "text", text: "Hello " },
-            { type: "text", text: "World", marks: [{ type: "strong" }] },
+            { type: "text", text: "World", marks: [{ type: "strong" }] as any },
           ],
         },
       ])
@@ -80,7 +80,7 @@ it("converts strong emphasized text", () => {
             { type: "text", text: "strong & emphasized: " },
             {
               type: "text",
-              marks: [{ type: "em" }, { type: "strong" }],
+              marks: [{ type: "em" }, { type: "strong" }] as any,
               text,
             },
           ],
@@ -109,7 +109,7 @@ it("converts inline code", () => {
             { type: "text", text: "This is " },
             {
               type: "text",
-              marks: [{ type: "code" }],
+              marks: [{ type: "code" }] as any,
               text,
             },
           ],
@@ -141,7 +141,7 @@ it("converts inline code", () => {
               {
                 type: "text",
                 text: "2",
-                marks: [{ type: "subsup", attrs: { type } }],
+                marks: [{ type: "subsup", attrs: { type } }] as any,
               },
             ],
           },
@@ -167,7 +167,7 @@ it("converts links", () => {
           content: [
             {
               type: "text",
-              marks: [{ type: "link", attrs: { href: url } }],
+              marks: [{ type: "link", attrs: { href: url } }] as any,
               text,
             },
           ],
@@ -612,7 +612,7 @@ it("converts layout containers", () => {
       convert(
         doc([
           {
-            type,
+            type: type as any,
             content: [
               {
                 type: "paragraph",
