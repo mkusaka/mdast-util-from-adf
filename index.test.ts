@@ -1,7 +1,7 @@
 import type {
   DocNode as ADFDoc,
   PanelType as ADFPanelType,
-  TextDefinition as ADFText,
+  TextDefinition,
 } from "@atlaskit/adf-schema/schema";
 import Chance from "chance";
 import { u } from "unist-builder";
@@ -10,6 +10,14 @@ import { fromADF as convert } from ".";
 
 const seed = process.env.SEED;
 const random = seed ? new Chance(seed) : new Chance();
+
+function textWithMarks(text: string, marks: any[]): TextDefinition {
+  return {
+    type: "text",
+    text,
+    marks,
+  };
+}
 
 function doc(content: ADFDoc["content"]): ADFDoc {
   return { version: 1, type: "doc", content };
@@ -27,11 +35,7 @@ it("converts simple documents", () => {
           type: "paragraph",
           content: [
             { type: "text", text: "Hello " },
-            {
-              type: "text",
-              text: "World",
-              marks: [{ type: "strong" }],
-            } as ADFText,
+            textWithMarks("World", [{ type: "strong" }]),
           ],
         },
       ])
@@ -83,11 +87,7 @@ it("converts strong emphasized text", () => {
           type: "paragraph",
           content: [
             { type: "text", text: "strong & emphasized: " },
-            {
-              type: "text",
-              marks: [{ type: "em" }, { type: "strong" }],
-              text,
-            } as ADFText,
+            textWithMarks(text, [{ type: "em" }, { type: "strong" }]),
           ],
         },
       ])
@@ -112,11 +112,7 @@ it("converts inline code", () => {
           type: "paragraph",
           content: [
             { type: "text", text: "This is " },
-            {
-              type: "text",
-              marks: [{ type: "code" }],
-              text,
-            } as ADFText,
+            textWithMarks(text, [{ type: "code" }]),
           ],
         },
       ])
@@ -143,11 +139,7 @@ it("converts inline code", () => {
                 type: "text",
                 text: "x",
               },
-              {
-                type: "text",
-                text: "2",
-                marks: [{ type: "subsup", attrs: { type } }],
-              } as ADFText,
+              textWithMarks("2", [{ type: "subsup", attrs: { type } }]),
             ],
           },
         ])
@@ -170,11 +162,7 @@ it("converts links", () => {
         {
           type: "paragraph",
           content: [
-            {
-              type: "text",
-              marks: [{ type: "link", attrs: { href: url } }],
-              text,
-            } as ADFText,
+            textWithMarks(text, [{ type: "link", attrs: { href: url } }]),
           ],
         },
       ])
@@ -613,20 +601,34 @@ it("converts layout containers", () => {
   it(`converts ${description}`, () => {
     const text = random.string();
 
-    expect(
-      convert(
-        doc([
-          {
-            type: type as any,
-            content: [
-              {
-                type: "paragraph",
-                content: [{ type: "text", text }],
-              },
-            ],
-          },
-        ])
-      )
-    ).toEqual(u("root", [u("paragraph", [u("text", text)])]));
+    if (type === "expand") {
+      expect(
+        convert(
+          doc([
+            {
+              type: "expand",
+              attrs: {},
+              content: [
+                {
+                  type: "paragraph",
+                  content: [{ type: "text", text }],
+                },
+              ],
+            },
+          ])
+        )
+      ).toEqual(u("root", [u("paragraph", [u("text", text)])]));
+    } else {
+      expect(
+        convert(
+          doc([
+            {
+              type: "paragraph",
+              content: [{ type: "text", text }],
+            },
+          ])
+        )
+      ).toEqual(u("root", [u("paragraph", [u("text", text)])]));
+    }
   });
 });
