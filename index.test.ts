@@ -604,43 +604,46 @@ it("converts layout containers", () => {
   ).toEqual(u("root", [u("paragraph", [u("text", content)])]));
 });
 
-(
-  [
-    ["expand", "expand"],
-    ["nested expand", "nestedExpand"],
-  ] as const
-).forEach(([description, type]) => {
-  it(`converts ${description}`, () => {
-    const text = random.string();
+it("converts expand", () => {
+  const text = random.string();
 
-    if (type === "expand") {
-      expect(
-        convert(
-          doc([
-            {
-              type: "expand",
-              attrs: {},
-              content: [
-                {
-                  type: "paragraph",
-                  content: [{ type: "text", text }],
-                },
-              ],
-            },
-          ])
-        )
-      ).toEqual(u("root", [u("paragraph", [u("text", text)])]));
-    } else {
-      expect(
-        convert(
-          doc([
+  expect(
+    convert(
+      doc([
+        {
+          type: "expand",
+          attrs: {},
+          content: [
             {
               type: "paragraph",
               content: [{ type: "text", text }],
             },
-          ])
-        )
-      ).toEqual(u("root", [u("paragraph", [u("text", text)])]));
-    }
-  });
+          ],
+        },
+      ])
+    )
+  ).toEqual(u("root", [u("paragraph", [u("text", text)])]));
+});
+
+it("converts nested expand", () => {
+  const text = random.string();
+
+  expect(
+    convert({
+      version: 1,
+      type: "doc",
+      content: [
+        {
+          type: "nestedExpand",
+          attrs: {},
+          content: [
+            {
+              type: "paragraph",
+              content: [{ type: "text", text }],
+            },
+          ],
+        } as any,
+      ],
+    })
+  ).toEqual(u("root", [u("paragraph", [u("text", text)])]));
 });
