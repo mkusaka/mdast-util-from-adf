@@ -647,3 +647,170 @@ it("converts nested expand", () => {
     })
   ).toEqual(u("root", [u("paragraph", [u("text", text)])]));
 });
+
+it("converts tables (basic)", () => {
+  expect(
+    convert(
+      doc([
+        {
+          type: "table",
+          content: [
+            {
+              type: "tableRow",
+              content: [
+                {
+                  type: "tableCell",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [{ type: "text", text: "Cell content" }],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ])
+    )
+  ).toEqual(
+    u("root", [
+      u("table", [
+        u("tableRow", [
+          u("tableCell", [u("paragraph", [u("text", "Cell content")])]),
+        ]),
+      ]),
+    ])
+  );
+});
+
+it("converts tables (with headers)", () => {
+  expect(
+    convert(
+      doc([
+        {
+          type: "table",
+          content: [
+            {
+              type: "tableRow",
+              content: [
+                {
+                  type: "tableHeader",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [{ type: "text", text: "Header 1" }],
+                    },
+                  ],
+                },
+                {
+                  type: "tableHeader",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [{ type: "text", text: "Header 2" }],
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              type: "tableRow",
+              content: [
+                {
+                  type: "tableCell",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [{ type: "text", text: "Data 1" }],
+                    },
+                  ],
+                },
+                {
+                  type: "tableCell",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [{ type: "text", text: "Data 2" }],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ])
+    )
+  ).toEqual(
+    u("root", [
+      u("table", [
+        u("tableRow", [
+          u("tableCell", [u("paragraph", [u("text", "Header 1")])]),
+          u("tableCell", [u("paragraph", [u("text", "Header 2")])]),
+        ]),
+        u("tableRow", [
+          u("tableCell", [u("paragraph", [u("text", "Data 1")])]),
+          u("tableCell", [u("paragraph", [u("text", "Data 2")])]),
+        ]),
+      ]),
+    ])
+  );
+});
+
+it("converts tables (with formatted content)", () => {
+  expect(
+    convert(
+      doc([
+        {
+          type: "table",
+          content: [
+            {
+              type: "tableRow",
+              content: [
+                {
+                  type: "tableCell",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [
+                        { type: "text", text: "Normal " },
+                        textWithMarks("bold", [{ type: "strong" }]),
+                        { type: "text", text: " text" },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  type: "tableCell",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [textWithMarks("italic", [{ type: "em" }])],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ])
+    )
+  ).toEqual(
+    u("root", [
+      u("table", [
+        u("tableRow", [
+          u("tableCell", [
+            u("paragraph", [
+              u("text", "Normal "),
+              u("strong", [u("text", "bold")]),
+              u("text", " text"),
+            ]),
+          ]),
+          u("tableCell", [
+            u("paragraph", [u("emphasis", [u("text", "italic")])]),
+          ]),
+        ]),
+      ]),
+    ])
+  );
+});
