@@ -64,4 +64,4 @@ jobs:
         run: |
           export SEED=$(openssl rand -hex 16)
           echo $SEED
-          npm run test
+          npm run test:run
