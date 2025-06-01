@@ -10,6 +10,7 @@ import type {
 } from "@atlaskit/adf-schema/schema";
 import Chance from "chance";
 import { u } from "unist-builder";
+import { expect, it } from "vitest";
 
 import { fromADF as convert } from ".";
 
