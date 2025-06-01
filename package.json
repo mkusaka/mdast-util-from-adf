@@ -1,5 +1,5 @@
 {
-  "name": "@U06CKH0PYQP/mdast-util-from-adf",
+  "name": "@mkusaka/mdast-util-from-adf",
   "version": "2.1.1",
   "description": "Convert from Atlassian Document Format to Markdown Abstract Syntax Tree",
   "license": "MIT",
@@ -16,6 +16,9 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "del-cli dist && tsc --project tsconfig.dist.json",
     "lint": "eslint --ext .js,.ts --ignore-path .gitignore --max-warnings 0 .",
