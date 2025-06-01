@@ -91,7 +91,7 @@ type Proc<ADF> = (_: ADF, __: MDASTParent) => StackEntry<MDASTParent> | void;
 // Create a new stack entry for the content of an ADF node, if present.
 function enter<ADF extends { content?: ADFNode[] }>(
   adf: ADF,
-  parent: MDASTParent
+  parent: MDASTParent,
 ): StackEntry<MDASTParent> | void {
   return adf.content?.map((n) => [n, parent]);
 }
@@ -103,7 +103,7 @@ function expand<ADF extends ADFParent>(
   transform: (_: ADF) => {
     root: Extract<MDASTContent, MDASTParent>;
     leaf: Extract<MDASTContent, MDASTParent>;
-  }
+  },
 ): Proc<ADF> {
   return (adf: ADF, parent: MDASTParent) => {
     const tree = transform(adf);
@@ -115,7 +115,7 @@ function expand<ADF extends ADFParent>(
 // Produce an MDAST counterpart for this ADF node.
 // Continue processing branches in the ADF tree.
 function map<ADF extends ADFParent>(
-  transform: (_: ADF) => Extract<MDASTContent, MDASTParent>
+  transform: (_: ADF) => Extract<MDASTContent, MDASTParent>,
 ): Proc<ADF> {
   return (adf: ADF, parent: MDASTParent) => {
     const node = transform(adf);
@@ -136,7 +136,7 @@ function put<ADF>(transform: (_: ADF) => MDASTContent): Proc<ADF> {
 // Instead, continue with processing its content.
 function skip<ADF extends ADFParent>(
   adf: ADF,
-  parent: MDASTParent
+  parent: MDASTParent,
 ): StackEntry<MDASTParent> | void {
   return enter(adf, parent);
 }
@@ -166,7 +166,7 @@ const handlers: Record<ADFType, Proc<any> | undefined> = {
     const node = u(
       "listItem",
       { spread: false, checked: adf.attrs.state === "DECIDED" },
-      [content]
+      [content],
     );
     return { root: node, leaf: content };
   }),
@@ -224,7 +224,7 @@ const handlers: Record<ADFType, Proc<any> | undefined> = {
     const node: MDASTListItem = u(
       "listItem",
       { spread: false, checked: adf.attrs.state === "DONE" },
-      [content]
+      [content],
     );
     return { root: node, leaf: content };
   }),
