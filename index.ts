@@ -80,7 +80,7 @@ type ADFNode =
   | ADFTaskItem
   | ADFTaskList
   | ADFText;
-type ADFType = ADFNode["type"];
+export type ADFType = ADFNode["type"];
 type ADFParent = Extract<ADFNode, { content?: Array<ADFNode> }>;
 
 type StackEntry<MDASTNode extends MDASTParent> = [ADFNode, MDASTNode][];

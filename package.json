@@ -21,6 +21,7 @@
     "lint": "eslint --ext .js,.ts --ignore-path .gitignore --max-warnings 0 .",
     "prettier": "prettier --check '**/*.{ts,js,json,md}' --ignore-path .gitignore",
     "test": "jest",
+    "typecheck": "tsc --noEmit",
     "prepare": "npm run build"
   },
   "dependencies": {

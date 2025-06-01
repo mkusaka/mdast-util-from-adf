@@ -1,7 +1,13 @@
 import type {
+  CodeDefinition,
   DocNode as ADFDoc,
+  EmDefinition,
+  LinkDefinition,
   PanelType as ADFPanelType,
-} from "@atlaskit/adf-schema";
+  StrongDefinition,
+  SubSupDefinition,
+  TextDefinition,
+} from "@atlaskit/adf-schema/schema";
 import Chance from "chance";
 import { u } from "unist-builder";
 
@@ -9,6 +15,21 @@ import { fromADF as convert } from ".";
 
 const seed = process.env.SEED;
 const random = seed ? new Chance(seed) : new Chance();
+
+type MarkDefinition =
+  | StrongDefinition
+  | EmDefinition
+  | CodeDefinition
+  | LinkDefinition
+  | SubSupDefinition;
+
+function textWithMarks(text: string, marks: MarkDefinition[]): TextDefinition {
+  return {
+    type: "text",
+    text,
+    marks,
+  };
+}
 
 function doc(content: ADFDoc["content"]): ADFDoc {
   return { version: 1, type: "doc", content };
@@ -26,7 +47,7 @@ it("converts simple documents", () => {
           type: "paragraph",
           content: [
             { type: "text", text: "Hello " },
-            { type: "text", text: "World", marks: [{ type: "strong" }] },
+            textWithMarks("World", [{ type: "strong" }]),
           ],
         },
       ])
@@ -78,11 +99,7 @@ it("converts strong emphasized text", () => {
           type: "paragraph",
           content: [
             { type: "text", text: "strong & emphasized: " },
-            {
-              type: "text",
-              marks: [{ type: "em" }, { type: "strong" }],
-              text,
-            },
+            textWithMarks(text, [{ type: "em" }, { type: "strong" }]),
           ],
         },
       ])
@@ -107,11 +124,7 @@ it("converts inline code", () => {
           type: "paragraph",
           content: [
             { type: "text", text: "This is " },
-            {
-              type: "text",
-              marks: [{ type: "code" }],
-              text,
-            },
+            textWithMarks(text, [{ type: "code" }]),
           ],
         },
       ])
@@ -138,11 +151,7 @@ it("converts inline code", () => {
                 type: "text",
                 text: "x",
               },
-              {
-                type: "text",
-                text: "2",
-                marks: [{ type: "subsup", attrs: { type } }],
-              },
+              textWithMarks("2", [{ type: "subsup", attrs: { type } }]),
             ],
           },
         ])
@@ -165,11 +174,7 @@ it("converts links", () => {
         {
           type: "paragraph",
           content: [
-            {
-              type: "text",
-              marks: [{ type: "link", attrs: { href: url } }],
-              text,
-            },
+            textWithMarks(text, [{ type: "link", attrs: { href: url } }]),
           ],
         },
       ])
@@ -599,29 +604,46 @@ it("converts layout containers", () => {
   ).toEqual(u("root", [u("paragraph", [u("text", content)])]));
 });
 
-(
-  [
-    ["expand", "expand"],
-    ["nested expand", "nestedExpand"],
-  ] as const
-).forEach(([description, type]) => {
-  it(`converts ${description}`, () => {
-    const text = random.string();
+it("converts expand", () => {
+  const text = random.string();
 
-    expect(
-      convert(
-        doc([
-          {
-            type,
-            content: [
-              {
-                type: "paragraph",
-                content: [{ type: "text", text }],
-              },
-            ],
-          },
-        ])
-      )
-    ).toEqual(u("root", [u("paragraph", [u("text", text)])]));
-  });
+  expect(
+    convert(
+      doc([
+        {
+          type: "expand",
+          attrs: {},
+          content: [
+            {
+              type: "paragraph",
+              content: [{ type: "text", text }],
+            },
+          ],
+        },
+      ])
+    )
+  ).toEqual(u("root", [u("paragraph", [u("text", text)])]));
+});
+
+it("converts nested expand", () => {
+  const text = random.string();
+
+  expect(
+    convert({
+      version: 1,
+      type: "doc",
+      content: [
+        {
+          type: "nestedExpand",
+          attrs: {},
+          content: [
+            {
+              type: "paragraph",
+              content: [{ type: "text", text }],
+            },
+          ],
+        } as any,
+      ],
+    })
+  ).toEqual(u("root", [u("paragraph", [u("text", text)])]));
 });
