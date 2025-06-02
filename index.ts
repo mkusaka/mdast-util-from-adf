@@ -24,6 +24,7 @@ import type {
   OrderedListDefinition as ADFOrderedList,
   PanelDefinition as ADFPanel,
   ParagraphBaseDefinition as ADFParagraph,
+  PlaceholderDefinition as ADFPlaceholder,
   RuleDefinition as ADFRule,
   TableCellDefinition as ADFTableCell,
   TableDefinition as ADFTable,
@@ -72,6 +73,7 @@ type ADFNode =
   | ADFOrderedList
   | ADFPanel
   | ADFParagraph
+  | ADFPlaceholder
   | ADFRule
   | ADFTable
   | ADFTableCell
@@ -212,7 +214,7 @@ const handlers: Record<ADFType, Proc<any> | undefined> = {
   orderedList: map(() => u("list", { ordered: true, spread: false }, [])),
   panel: skip,
   paragraph: map(() => u("paragraph", [])),
-  placeholder: undefined,
+  placeholder: skip,
   rule: put(() => u("thematicBreak")),
   status: undefined,
   table: map(() => u("table", [])),
