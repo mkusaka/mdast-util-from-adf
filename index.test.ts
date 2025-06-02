@@ -817,3 +817,79 @@ it("converts tables (with formatted content)", () => {
     ]),
   );
 });
+
+it("ignores placeholder nodes", () => {
+  expect(
+    convert(
+      doc([
+        {
+          type: "paragraph",
+          content: [
+            { type: "text", text: "Before placeholder" },
+            {
+              type: "placeholder",
+              attrs: {
+                text: "ミーティング参加者を @メンション名でリストします。",
+              },
+            },
+            { type: "text", text: "After placeholder" },
+          ],
+        },
+      ]),
+    ),
+  ).toEqual(
+    u("root", [
+      u("paragraph", [
+        u("text", "Before placeholder"),
+        u("text", "After placeholder"),
+      ]),
+    ]),
+  );
+});
+
+it("ignores placeholder nodes in complex document", () => {
+  expect(
+    convert({
+      type: "doc",
+      content: [
+        {
+          type: "heading",
+          attrs: {
+            level: 2,
+          },
+          content: [
+            {
+              type: "emoji",
+              attrs: {
+                id: "1f5d3",
+                text: "🗓",
+                shortName: ":calendar_spiral:",
+              },
+            },
+            {
+              text: " 日付",
+              type: "text",
+            },
+          ],
+        },
+        {
+          type: "paragraph",
+          content: [
+            {
+              type: "placeholder",
+              attrs: {
+                text: "ミーティング参加者を @メンション名でリストします。",
+              },
+            },
+          ],
+        },
+      ],
+      version: 1,
+    }),
+  ).toEqual(
+    u("root", [
+      u("heading", { depth: 2 }, [u("text", "🗓"), u("text", " 日付")]),
+      u("paragraph", []),
+    ]),
+  );
+});
